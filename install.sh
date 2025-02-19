@@ -7,6 +7,7 @@ if is_not_user_root; then
     echo "You must be a root user to run this script. Please use: sudo ./install.sh" 2>&1
     exit 1
 fi
+export username=$(id -u -n 1000)
 
 # Run each script in the scripts directory
 for script in ./scripts/*.sh; do

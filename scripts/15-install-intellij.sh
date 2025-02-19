@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define installation path
-INSTALL_DIR="$HOME/.local/intellij"
+INSTALL_DIR="/home/$username/.local/intellij"
 
 # Create installation directory if it doesn't exist
 mkdir -p "$INSTALL_DIR"
