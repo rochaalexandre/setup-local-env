@@ -1,7 +1,6 @@
 #!/bin/bash
 
-echo "Installing essential packages..."
-apt install -y nala
+echo "Installing essential packages...\n"
 apt install -y \
   unzip wget build-essential libx11-dev libxft-dev libxinerama-dev gpg neofetch flameshot apt-transport-https curl \
   build-essential pkg-config autoconf bison clang rustc \
@@ -9,3 +8,10 @@ apt install -y \
   libvips libmagickwand-dev mupdf mupdf-tools gir1.2-gtop-2.0 gir1.2-clutter-1.0 \
   redis-tools sqlite3 libsqlite3-0 libmysqlclient-dev libpq-dev postgresql-client postgresql-client-common \
   curl gpg uidmap
+
+if [ $? -ne 0 ]; then
+    echo "❌ Essential packages installation failed!"
+    exit 1
+fi
+
+echo "✅ Essential packages installation completed!\n"

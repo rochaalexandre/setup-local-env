@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "Installing fonts..."
+echo "Installing fonts...\n"
 
 # Get main non-root username (assuming UID 1000 is the first regular user)
 username=$(id -nu 1000)
@@ -33,4 +33,4 @@ chown -R "$username:$username" "$font_dir"
 fc-cache
 cd -
 
-echo "✅ Fonts installation completed!"
+echo "✅ Fonts installation completed!\n"
