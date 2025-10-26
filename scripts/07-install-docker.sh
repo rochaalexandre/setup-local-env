@@ -8,7 +8,6 @@ sh install-docker.sh
 
 
 echo "Setting up Docker rootless mode..."
-nala install -y uidmap
 su -c 'dockerd-rootless-setuptool.sh install' $(id -u -n 1000)
 
 rm install-docker.sh

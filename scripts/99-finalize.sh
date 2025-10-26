@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Cleaning up..."
-nala autoremove -y
-nala clean
+apt autoremove -y
+apt autoclean
 
-echo "Installation completed!"
+echo "🏁 Installation completed! ✅"

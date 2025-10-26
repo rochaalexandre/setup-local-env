@@ -21,7 +21,7 @@ cat > "$DESKTOP_FILE" <<EOL
 Version=1.0
 Type=Application
 Name=IntelliJ IDEA Ultimate
-Exec=$INSTALL_DIR/bin/idea.sh
+Exec=$INSTALL_DIR/bin/idea
 Icon=$INSTALL_DIR/bin/idea.png
 Terminal=false
 Categories=Development;IDE;

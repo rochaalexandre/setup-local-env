@@ -1,4 +1,3 @@
 #!/bin/bash
-
 echo "Updating system packages..."
-apt update && apt upgrade -y
+sudo apt update && apt upgrade -y

@@ -5,7 +5,6 @@ username=$(logname)
 
 echo "Installing Zed as $username..."
 
-
 # Download the installation script as the regular user
 sudo -u "$username" curl -fsSL https://zed.dev/install.sh -o zed.sh
 
