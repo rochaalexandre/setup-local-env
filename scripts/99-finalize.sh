@@ -1,12 +1,8 @@
 #!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+. "$SCRIPT_DIR/lib/common.sh"
+require_root
 
-echo "Cleaning up..."
-apt autoremove -y
-apt autoclean
-
-if [ $? -ne 0 ]; then
-    echo "❌ Cleanup failed!"
-    exit 1
-fi
-
-echo "🏁 Installation completed! ✅"
+log_info "Cleaning up..."
+apt autoremove -y && apt autoclean || { log_error "Cleanup failed!"; exit 1; }
+log_success "Done! 🏁"

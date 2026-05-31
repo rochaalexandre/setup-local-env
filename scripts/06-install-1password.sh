@@ -1,20 +1,12 @@
 #!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+. "$SCRIPT_DIR/lib/common.sh"
+require_root
 
-echo "Installing 1Password...\n"
-cd /tmp
-wget https://downloads.1password.com/linux/debian/amd64/stable/1password-latest.deb
+log_info "Installing 1Password..."
+wget -q https://downloads.1password.com/linux/debian/amd64/stable/1password-latest.deb -O /tmp/1password.deb \
+    || { log_error "Failed to download 1Password!"; exit 1; }
 
-if [ $? -ne 0 ]; then
-    echo "❌ Failed to download 1Password!\n"
-    exit 1
-fi
-
-apt install -y ./1password-latest.deb
-
-if [ $? -ne 0 ]; then
-    echo "❌ 1Password installation failed!\n"
-    exit 1
-fi
-
-rm 1password-latest.deb
-echo "✅ 1Password installation completed!\n"
+apt install -y /tmp/1password.deb || { log_error "1Password installation failed!"; exit 1; }
+rm /tmp/1password.deb
+log_success "1Password installed"

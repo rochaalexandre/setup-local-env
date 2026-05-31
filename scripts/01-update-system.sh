@@ -1,10 +1,8 @@
 #!/bin/bash
-echo "Updating system packages..."
-apt update && apt upgrade -y
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+. "$SCRIPT_DIR/lib/common.sh"
+require_root
 
-if [ $? -ne 0 ]; then
-    echo "❌ System update failed!"
-    exit 1
-fi
-
-echo "✅ System update completed!\n"
+log_info "Updating system packages..."
+apt update && apt upgrade -y || { log_error "System update failed!"; exit 1; }
+log_success "System updated"

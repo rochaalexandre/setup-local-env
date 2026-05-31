@@ -1,20 +1,16 @@
 #!/bin/bash
-# Stream music using https://spotify.com
-echo "Installing Spotify..."
-curl -sS https://download.spotify.com/debian/pubkey_C85668DF69375001.gpg | gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/spotify.gpg
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+. "$SCRIPT_DIR/lib/common.sh"
+require_root
 
-if [ $? -ne 0 ]; then
-    echo "❌ Failed to add Spotify GPG key!\n"
-    exit 1
-fi
+log_info "Installing Spotify..."
+curl -sS https://download.spotify.com/debian/pubkey_C85668DF69375001.gpg \
+    | gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/spotify.gpg \
+    || { log_error "Failed to add Spotify GPG key!"; exit 1; }
 
-echo "deb [signed-by=/etc/apt/trusted.gpg.d/spotify.gpg] http://repository.spotify.com stable non-free" | tee /etc/apt/sources.list.d/spotify.list
+echo "deb [signed-by=/etc/apt/trusted.gpg.d/spotify.gpg] http://repository.spotify.com stable non-free" \
+    | tee /etc/apt/sources.list.d/spotify.list
+
 apt update -y
-apt install -y spotify-client
-
-if [ $? -ne 0 ]; then
-    echo "❌ Spotify installation failed!\n"
-    exit 1
-fi
-
-echo "✅ Spotify installation completed!\n"
+apt install -y spotify-client || { log_error "Spotify installation failed!"; exit 1; }
+log_success "Spotify installed"

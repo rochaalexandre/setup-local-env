@@ -1,20 +1,12 @@
 #!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+. "$SCRIPT_DIR/lib/common.sh"
+require_root
 
-echo "Installing Google Chrome...\n"
-cd /tmp
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+log_info "Installing Google Chrome..."
+wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O /tmp/chrome.deb \
+    || { log_error "Failed to download Google Chrome!"; exit 1; }
 
-if [ $? -ne 0 ]; then
-    echo "❌ Failed to download Google Chrome!\n"
-    exit 1
-fi
-
-apt install -y ./google-chrome-stable_current_amd64.deb
-
-if [ $? -ne 0 ]; then
-    echo "❌ Google Chrome installation failed!\n"
-    exit 1
-fi
-
-rm google-chrome-stable_current_amd64.deb
-echo "✅ Google Chrome installation completed!\n"
+apt install -y /tmp/chrome.deb || { log_error "Google Chrome installation failed!"; exit 1; }
+rm /tmp/chrome.deb
+log_success "Google Chrome installed"

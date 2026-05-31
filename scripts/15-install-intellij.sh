@@ -1,33 +1,22 @@
 #!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+. "$SCRIPT_DIR/lib/common.sh"
+require_root
 
-echo "Installing IntelliJ IDEA...\n"
+INSTALL_DIR="$USER_HOME/.local/intellij"
+DESKTOP_FILE="$USER_HOME/.local/share/applications/intellij-idea.desktop"
 
-# Get the current non-root user
-username=$(logname)
-
-# Define installation path
-INSTALL_DIR="/home/$username/.local/intellij"
-DESKTOP_FILE="/home/$username/.local/share/applications/intellij-idea.desktop"
-
-# Create installation directory if it doesn't exist
+log_info "Installing IntelliJ IDEA for $USERNAME..."
 mkdir -p "$INSTALL_DIR"
 
-# Download and extract IntelliJ IDEA to the specified path
-echo "Downloading IntelliJ IDEA..."
-curl -L "https://download.jetbrains.com/product?code=IU&latest&distribution=linux" | tar xz -C "$INSTALL_DIR" --strip 1
+curl -L "https://download.jetbrains.com/product?code=IU&latest&distribution=linux" \
+    | tar xz -C "$INSTALL_DIR" --strip 1 \
+    || { log_error "IntelliJ IDEA download/extraction failed!"; exit 1; }
 
-if [ $? -ne 0 ]; then
-    echo "❌ IntelliJ IDEA download/extraction failed!\n"
-    exit 1
-fi
+chown -R "$USERNAME:$USERNAME" "$INSTALL_DIR"
 
-# Set proper ownership
-chown -R "$username:$username" "$INSTALL_DIR"
-
-# Create desktop entry
 mkdir -p "$(dirname "$DESKTOP_FILE")"
-
-cat > "$DESKTOP_FILE" <<EOL
+cat > "$DESKTOP_FILE" << EOL
 [Desktop Entry]
 Version=1.0
 Type=Application
@@ -38,8 +27,6 @@ Terminal=false
 Categories=Development;IDE;
 EOL
 
-# Ensure the desktop file is executable
 chmod +x "$DESKTOP_FILE"
-chown "$username:$username" "$DESKTOP_FILE"
-
-echo "✅ IntelliJ IDEA installation completed!\n"
+chown "$USERNAME:$USERNAME" "$DESKTOP_FILE"
+log_success "IntelliJ IDEA installed"

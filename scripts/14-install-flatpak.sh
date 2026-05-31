@@ -1,12 +1,11 @@
 #!/bin/bash
-echo "Installing Flatpak...\n"
-apt install -y flatpak
-apt install -y gnome-software-plugin-flatpak
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+. "$SCRIPT_DIR/lib/common.sh"
+require_root
 
-if [ $? -ne 0 ]; then
-    echo "❌ Flatpak installation failed!\n"
-    exit 1
-fi
+log_info "Installing Flatpak..."
+apt install -y flatpak gnome-software-plugin-flatpak \
+    || { log_error "Flatpak installation failed!"; exit 1; }
 
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-echo "✅ Flatpak installation completed!\n"
+log_success "Flatpak installed"

@@ -1,36 +1,26 @@
 #!/bin/bash
-echo "Installing fonts...\n"
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+. "$SCRIPT_DIR/lib/common.sh"
+require_root
 
-# Get main non-root username (assuming UID 1000 is the first regular user)
-username=$(id -nu 1000)
-font_dir="/home/$username/.fonts"
+FONT_DIR="$USER_HOME/.fonts"
+mkdir -p "$FONT_DIR"
 
-mkdir -p "$font_dir"
-cd /tmp
+FONTS="FiraCode Meslo JetBrainsMono"
+BASE_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1"
 
-# Define the fonts and base URL
-fonts="FiraCode Meslo JetBrainsMono"
-base_url="https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3"
-
-for font in $fonts; do
-    dest_dir="$font_dir/$font"
-
+for font in $FONTS; do
+    dest_dir="$FONT_DIR/$font"
     if [ -d "$dest_dir" ]; then
-        echo "⏩ Font $font already installed, skipping..."
+        log_skip "Font $font already installed"
         continue
     fi
-
-    echo "⬇️  Downloading $font..."
-    wget -q "${base_url}/${font}.zip" -O "${font}.zip"
-    unzip -oq "${font}.zip" -d "$font_dir"
-    rm "${font}.zip"
+    log_info "Downloading $font..."
+    wget -q "${BASE_URL}/${font}.zip" -O "/tmp/${font}.zip"
+    unzip -oq "/tmp/${font}.zip" -d "$dest_dir"
+    rm "/tmp/${font}.zip"
 done
-ls
-# Fix permissions
-chown -R "$username:$username" "$font_dir"
 
-# Refresh font cache
+chown -R "$USERNAME:$USERNAME" "$FONT_DIR"
 fc-cache
-cd -
-
-echo "✅ Fonts installation completed!\n"
+log_success "Fonts installed"

@@ -1,62 +1,33 @@
-#!/bin/sh
+#!/bin/bash
 
-# Check if script is run as root
-is_not_user_root() {
-    [ "$(id -u)" -ne 0 ]
-}
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+. "$SCRIPT_DIR/lib/common.sh"
 
-if is_not_user_root; then
-    echo "You must be a root user to run this script. Please use: sudo ./install.sh" 2>&1
-    exit 1
-fi
+require_root
 
-# Get username for UID 1000
-username=$(id -u -n 1000)
-export username
-
-# Counters for tracking results
 success_count=0
 fail_count=0
 total_count=0
 
-echo "🚀 Starting installation process..."
+log_section "Starting installation process"
+log_info "Installing for user: $USERNAME (home: $USER_HOME)"
 
-# Run each script in the scripts directory
-for script in ./scripts/*.sh; do
+for script in "$SCRIPT_DIR"/scripts/*.sh; do
     script_name=$(basename "$script")
-    echo ""
-    echo "=========================================="
-    echo "📦 Running $script_name..."
-    echo "=========================================="
-    
-    # Run the script and capture exit code
-    if sh "$script"; then
+    log_section "$script_name"
+
+    if bash "$script"; then
         success_count=$((success_count + 1))
-        echo ""
-        echo "✅ SUCCESS: $script_name completed successfully"
+        log_success "$script_name completed"
     else
-        exit_code=$?
         fail_count=$((fail_count + 1))
-        echo ""
-        echo "❌ FAILED: $script_name failed (exit code: $exit_code)"
+        log_error "$script_name failed"
     fi
     total_count=$((total_count + 1))
 done
 
-echo ""
-echo "📊 Installation Summary:"
-echo "=========================================="
-echo "Total scripts: $total_count"
-echo "Successful: $success_count"
-echo "Failed: $fail_count"
-echo "=========================================="
+printf "\n📊 Results: %d/%d succeeded\n" "$success_count" "$total_count"
 
-if [ $fail_count -eq 0 ]; then
-    echo ""
-    echo "🎉 All installations completed successfully!"
-    exit 0
-else
-    echo ""
-    echo "⚠️  Some installations failed. Please check the logs above for details."
-    exit 1
-fi
+[ $fail_count -eq 0 ] && log_success "All done!" && exit 0
+log_error "Some scripts failed. Check logs above."
+exit 1

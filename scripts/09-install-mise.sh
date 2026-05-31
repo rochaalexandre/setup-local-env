@@ -1,13 +1,10 @@
 #!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+. "$SCRIPT_DIR/lib/common.sh"
+require_root
 
-username=$(logname)
-echo "Installing Mise...\n"
+log_info "Installing Mise for $USERNAME..."
+run_as_user bash -c 'curl https://mise.run | sh' \
+    || { log_error "Mise installation failed!"; exit 1; }
 
-curl https://mise.run/zsh | sudo -u "$username" sh
-
-if [ $? -ne 0 ]; then
-    echo "❌ Mise installation failed!\n"
-    exit 1
-fi
-
-echo "✅ Mise installation completed!\n"
+log_success "Mise installed"

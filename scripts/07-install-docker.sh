@@ -1,24 +1,29 @@
 #!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+. "$SCRIPT_DIR/lib/common.sh"
+require_root
 
-echo "Installing Docker...\n"
-cd /tmp
-curl -fsSL https://get.docker.com -o install-docker.sh
+log_info "Installing Docker..."
+curl -fsSL https://get.docker.com -o /tmp/install-docker.sh \
+    || { log_error "Failed to download Docker installation script!"; exit 1; }
 
-if [ $? -ne 0 ]; then
-    echo "❌ Failed to download Docker installation script!"
-    exit 1
-fi
+sh /tmp/install-docker.sh || { log_error "Docker installation failed!"; exit 1; }
+rm /tmp/install-docker.sh
 
-chown $username:$username install-docker.sh
-sh install-docker.sh
+log_info "Configuring Docker rootless mode for $USERNAME..."
+# Required packages for rootless
+apt install -y uidmap dbus-user-session
 
-if [ $? -ne 0 ]; then
-    echo "❌ Docker installation failed!\n"
-    exit 1
-fi
+# Enable lingering so user services survive logout
+loginctl enable-linger "$USERNAME"
 
-echo "Setting up Docker rootless mode...\n"
-su -c 'dockerd-rootless-setuptool.sh install' $(id -u -n 1000)
+# Setup rootless docker as the real user
+run_as_user dockerd-rootless-setuptool.sh install \
+    || { log_error "Docker rootless setup failed!"; exit 1; }
 
-rm install-docker.sh
-echo "✅ Docker installation completed!\n"
+# Configure environment for rootless docker
+DOCKER_ENV="export DOCKER_HOST=unix:///run/user/$(id -u $USERNAME)/docker.sock"
+PROFILE="$USER_HOME/.profile"
+grep -qF "DOCKER_HOST" "$PROFILE" 2>/dev/null || echo "$DOCKER_ENV" >> "$PROFILE"
+
+log_success "Docker installed (rootless)"

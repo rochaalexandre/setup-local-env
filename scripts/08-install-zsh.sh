@@ -1,12 +1,10 @@
 #!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+. "$SCRIPT_DIR/lib/common.sh"
+require_root
 
-echo "Installing Zsh and Autojump...\n"
-apt install -y zsh autojump
+log_info "Installing Zsh..."
+apt install -y zsh || { log_error "Zsh installation failed!"; exit 1; }
 
-if [ $? -ne 0 ]; then
-    echo "❌ Zsh installation failed!\n"
-    exit 1
-fi
-
-chsh -s $(which zsh) $(id -u -n 1000)
-echo "✅ Zsh installation completed!\n"
+chsh -s "$(which zsh)" "$USERNAME"
+log_success "Zsh installed and set as default shell for $USERNAME"

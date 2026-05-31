@@ -1,11 +1,10 @@
 #!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+. "$SCRIPT_DIR/lib/common.sh"
+require_root
 
-echo "Installing Starship...\n"
-curl -sS https://starship.rs/install.sh | sh -s -- -y
+log_info "Installing Starship..."
+curl -sS https://starship.rs/install.sh | sh -s -- -y \
+    || { log_error "Starship installation failed!"; exit 1; }
 
-if [ $? -ne 0 ]; then
-    echo "❌ Starship installation failed!\n"
-    exit 1
-fi
-
-echo "✅ Starship installation completed!\n"
+log_success "Starship installed"

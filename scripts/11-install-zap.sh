@@ -1,34 +1,17 @@
 #!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+. "$SCRIPT_DIR/lib/common.sh"
+require_root
 
-echo "Installing Zap Plugin Manager for Zsh...\n"
+log_info "Installing Zap plugin manager for $USERNAME..."
 
-# Get the current non-root user
-username=$(logname)
+TEMP_DIR="/tmp/zap-install"
+rm -rf "$TEMP_DIR"
+git clone https://github.com/zap-zsh/zap.git "$TEMP_DIR" \
+    || { log_error "Failed to clone Zap!"; exit 1; }
 
-# Create temporary directory for cloning
-temp_dir="/tmp/zap-install"
-rm -rf "$temp_dir"
-mkdir -p "$temp_dir"
+run_as_user zsh "$TEMP_DIR/install.zsh" --branch release-v1 \
+    || { log_error "Zap installation failed!"; rm -rf "$TEMP_DIR"; exit 1; }
 
-# Clone the Zap repository
-echo "Cloning Zap repository..."
-git clone https://github.com/zap-zsh/zap.git "$temp_dir"
-
-if [ $? -ne 0 ]; then
-    echo "❌ Failed to clone Zap repository!\n"
-    exit 1
-fi
-
-# Run the installation script as the regular user
-echo "Running Zap installation..."
-sudo -u "$username" zsh "$temp_dir/install.zsh" --branch release-v1
-
-if [ $? -ne 0 ]; then
-    echo "❌ Zap installation failed!\n"
-    rm -rf "$temp_dir"
-    exit 1
-fi
-
-# Cleanup
-rm -rf "$temp_dir"
-echo "✅ Zap installation completed!\n"
+rm -rf "$TEMP_DIR"
+log_success "Zap installed"
