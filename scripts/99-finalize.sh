@@ -4,5 +4,5 @@ SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 require_root
 
 log_info "Cleaning up..."
-apt autoremove -y && apt autoclean || { log_error "Cleanup failed!"; exit 1; }
+pkg_cleanup || { log_error "Cleanup failed!"; exit 1; }
 log_success "Done! 🏁"

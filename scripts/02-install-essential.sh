@@ -4,17 +4,16 @@ SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 require_root
 
 log_info "Installing essential packages..."
-apt install -y \
-    unzip wget curl gpg uidmap \
-    build-essential pkg-config autoconf bison clang rustc \
-    libssl-dev libreadline-dev zlib1g-dev libyaml-dev libncurses5-dev \
-    libffi-dev libgdbm-dev libjemalloc2 \
-    libx11-dev libxft-dev libxinerama-dev \
-    libvips libmagickwand-dev mupdf mupdf-tools \
-    gir1.2-gtop-2.0 gir1.2-clutter-1.0 \
-    redis-tools sqlite3 libsqlite3-0 \
-    libmysqlclient-dev libpq-dev postgresql-client \
-    apt-transport-https neofetch flameshot autojump \
+pkg_install \
+    $PKG_BUILD_ESSENTIAL $PKG_PKG_CONFIG $PKG_CLANG $PKG_RUSTC $PKG_BISON $PKG_AUTOCONF \
+    $PKG_OPENSSL_DEV $PKG_READLINE_DEV $PKG_ZLIB_DEV $PKG_YAML_DEV $PKG_NCURSES_DEV \
+    $PKG_FFI_DEV $PKG_GDBM_DEV $PKG_JEMALLOC \
+    $PKG_X11_DEV $PKG_XFT_DEV $PKG_XINERAMA_DEV \
+    $PKG_VIPS $PKG_MAGICKWAND $PKG_MUPDF \
+    $PKG_GIR_GTOP $PKG_GIR_CLUTTER \
+    $PKG_SQLITE3 $PKG_SQLITE3_DEV $PKG_MYSQL_DEV $PKG_PG_DEV $PKG_PG_CLIENT \
+    $PKG_REDIS_CLI $PKG_CURL $PKG_WGET $PKG_UNZIP $PKG_GPG $PKG_UIDMAP \
+    $PKG_NEOFETCH $PKG_FLAMESHOT $PKG_AUTOJUMP $PKG_APT_TRANSPORT \
     || { log_error "Essential packages installation failed!"; exit 1; }
 
 log_success "Essential packages installed"

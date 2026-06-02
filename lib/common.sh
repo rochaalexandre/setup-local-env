@@ -1,9 +1,18 @@
 #!/bin/bash
 
 # ---------------------------------------------------------------------------
+# Detect distro
+# ---------------------------------------------------------------------------
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    DISTRO="${ID:-unknown}"
+else
+    DISTRO="unknown"
+fi
+export DISTRO
+
+# ---------------------------------------------------------------------------
 # Resolve the real (non-root) username reliably.
-# SUDO_USER is set by sudo and is the most reliable source.
-# Falls back to logname, then to the first UID-1000 user.
 # ---------------------------------------------------------------------------
 resolve_username() {
     if [ -n "${SUDO_USER:-}" ] && [ "$SUDO_USER" != "root" ]; then
@@ -26,6 +35,56 @@ USER_HOME=$(eval echo "~$USERNAME")
 
 export USERNAME
 export USER_HOME
+
+# ---------------------------------------------------------------------------
+# Package manager abstraction
+# ---------------------------------------------------------------------------
+pkg_install() {
+    # Filter out empty package names (distros that don't have a package)
+    local pkgs=""
+    for p in "$@"; do
+        [ -n "$p" ] && pkgs="$pkgs $p"
+    done
+    [ -z "$pkgs" ] && return 0
+
+    case "$DISTRO" in
+        ubuntu|pop|linuxmint) apt install -y $pkgs ;;
+        fedora)               dnf install -y --skip-unavailable $pkgs ;;
+        *) log_error "Unsupported distro: $DISTRO"; exit 1 ;;
+    esac
+}
+
+pkg_update() {
+    case "$DISTRO" in
+        ubuntu|pop|linuxmint) apt update && apt upgrade -y ;;
+        fedora)               dnf upgrade -y ;;
+        *) log_error "Unsupported distro: $DISTRO"; exit 1 ;;
+    esac
+}
+
+pkg_cleanup() {
+    case "$DISTRO" in
+        ubuntu|pop|linuxmint) apt autoremove -y && apt autoclean ;;
+        fedora)               dnf autoremove -y ;;
+        *) log_error "Unsupported distro: $DISTRO"; exit 1 ;;
+    esac
+}
+
+pkg_add_repo() {
+    # Usage: pkg_add_repo <ubuntu-ppa> <fedora-copr>
+    local ppa="$1"
+    local copr="$2"
+    case "$DISTRO" in
+        ubuntu|pop|linuxmint)
+            pkg_install software-properties-common
+            add-apt-repository -y "$ppa"
+            apt update
+            ;;
+        fedora)
+            dnf copr enable -y "$copr"
+            ;;
+    esac
+}
 
 # ---------------------------------------------------------------------------
 # Logging helpers
@@ -52,3 +111,9 @@ require_root() {
 run_as_user() {
     sudo -u "$USERNAME" "$@"
 }
+
+# ---------------------------------------------------------------------------
+# Load package mappings
+# ---------------------------------------------------------------------------
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/.." && pwd)"
+. "$SCRIPT_ROOT/lib/packages.sh"

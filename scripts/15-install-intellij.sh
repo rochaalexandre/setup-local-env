@@ -9,7 +9,6 @@ DESKTOP_FILE="$USER_HOME/.local/share/applications/intellij-idea.desktop"
 log_info "Installing IntelliJ IDEA for $USERNAME..."
 mkdir -p "$INSTALL_DIR"
 
-## to use download the toolbox, just change IU (Intellij Ultimate) for TB
 curl -L "https://download.jetbrains.com/product?code=IU&latest&distribution=linux" \
     | tar xz -C "$INSTALL_DIR" --strip 1 \
     || { log_error "IntelliJ IDEA download/extraction failed!"; exit 1; }

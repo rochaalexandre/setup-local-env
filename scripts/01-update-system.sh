@@ -4,5 +4,5 @@ SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 require_root
 
 log_info "Updating system packages..."
-apt update && apt upgrade -y || { log_error "System update failed!"; exit 1; }
+pkg_update || { log_error "System update failed!"; exit 1; }
 log_success "System updated"
