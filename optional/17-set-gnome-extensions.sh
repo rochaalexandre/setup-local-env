@@ -55,7 +55,8 @@ extensions=(
     "Resource_Monitor@Ory0n"
     "just-perfection-desktop@just-perfection"
     "no-overview@fthx"
-    "places-menu@gnome-shell-extensions.gcampax.github.com"
+    "places-menu@gnome-shell-extensions.gcampax.github.com",
+    "quicksettings-audio-devices-hider@marcinjahn.com"
 )
 
 for ext in "${extensions[@]}"; do
