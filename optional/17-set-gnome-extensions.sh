@@ -2,13 +2,11 @@
 SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 . "$SCRIPT_DIR/lib/common.sh"
 
-# This script must run as the real user, not root
 if [ "$(id -u)" -eq 0 ]; then
-    log_error "This script must run as the regular user, not root. Run: ./19-install-gnome-extensions.sh"
+    log_error "This script must run as the regular user, not root. Run: ./17-set-gnome-extensions.sh"
     exit 1
 fi
 
-# Check if running GNOME
 if [ "$XDG_CURRENT_DESKTOP" != "GNOME" ]; then
     log_skip "Not a GNOME session (detected: ${XDG_CURRENT_DESKTOP:-unknown}), skipping..."
     exit 0
@@ -33,12 +31,18 @@ pipx install gnome-extensions-cli --system-site-packages \
 export PATH="$HOME/.local/bin:$PATH"
 
 # ---------------------------------------------------------------------------
+# App indicator
+# ---------------------------------------------------------------------------
+log_info "Installing app indicator support..."
+#gnome-extensions disable ubuntu-appindicators@ubuntu.com 2>/dev/null || true
+sudo pkg_install gnome-shell-extension-appindicator
+
+# ---------------------------------------------------------------------------
 # Disable default Ubuntu extensions (no-op on Fedora)
 # ---------------------------------------------------------------------------
 if [[ "$DISTRO" == "ubuntu" || "$DISTRO" == "pop" || "$DISTRO" == "linuxmint" ]]; then
     log_info "Disabling default Ubuntu extensions..."
     gnome-extensions disable tiling-assistant@ubuntu.com     2>/dev/null || true
-    gnome-extensions disable ubuntu-appindicators@ubuntu.com 2>/dev/null || true
     gnome-extensions disable ubuntu-dock@ubuntu.com          2>/dev/null || true
     gnome-extensions disable ding@rastersoft.com             2>/dev/null || true
 fi
@@ -55,7 +59,7 @@ extensions=(
     "Resource_Monitor@Ory0n"
     "just-perfection-desktop@just-perfection"
     "no-overview@fthx"
-    "places-menu@gnome-shell-extensions.gcampax.github.com",
+    "places-menu@gnome-shell-extensions.gcampax.github.com"
     "quicksettings-audio-devices-hider@marcinjahn.com"
 )
 
