@@ -27,7 +27,7 @@ gsettings set org.gnome.settings-daemon.plugins.power ambient-enabled false
 gsettings set org.gnome.mutter dynamic-workspaces true
 
 # Disable Super overlay key so Vicinae can use it
-#gsettings set org.gnome.mutter overlay-key ''
+gsettings set org.gnome.mutter overlay-key "['<Super>W']"
 
 # ---------------------------------------------------------------------------
 # Window management
@@ -45,8 +45,8 @@ gsettings set org.gnome.desktop.wm.keybindings tile-right "['<Super>Right']"
 # ---------------------------------------------------------------------------
 # Workspace navigation
 # ---------------------------------------------------------------------------
-gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-left "['<Ctrl><Alt>Left']"
-gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-right "['<Ctrl><Alt>Right']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-left "['<Ctrl><Super>Left']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-right "['<Ctrl><Super>Right']"
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-1 "['<Super>1']"
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-2 "['<Super>2']"
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-3 "['<Super>3']"
