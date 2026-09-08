@@ -16,7 +16,7 @@ log_info "Installing GNOME extension manager..."
 
 case "$DISTRO" in
     ubuntu|pop|linuxmint)
-        sudo pkg_install gnome-shell-extension-manager
+        sudo_pkg_install gnome-shell-extension-manager
         ;;
     fedora)
         flatpak install -y flathub com.mattjakeman.ExtensionManager
@@ -24,7 +24,7 @@ case "$DISTRO" in
 esac
 
 log_info "Installing pipx and gnome-extensions-cli..."
-sudo pkg_install pipx
+sudo_pkg_install pipx
 pipx install gnome-extensions-cli --system-site-packages \
     || { log_error "Failed to install gnome-extensions-cli!"; exit 1; }
 
@@ -35,7 +35,7 @@ export PATH="$HOME/.local/bin:$PATH"
 # ---------------------------------------------------------------------------
 log_info "Installing app indicator support..."
 #gnome-extensions disable ubuntu-appindicators@ubuntu.com 2>/dev/null || true
-sudo pkg_install gnome-shell-extension-appindicator
+sudo_pkg_install gnome-shell-extension-appindicator
 
 # ---------------------------------------------------------------------------
 # Disable default Ubuntu extensions (no-op on Fedora)
@@ -57,10 +57,8 @@ extensions=(
     "blur-my-shell@aunetx"
     "tactile@lundal.io"
     "Resource_Monitor@Ory0n"
-    "just-perfection-desktop@just-perfection"
     "no-overview@fthx"
     "places-menu@gnome-shell-extensions.gcampax.github.com"
-    "quicksettings-audio-devices-hider@marcinjahn.com"
 )
 
 for ext in "${extensions[@]}"; do
@@ -75,7 +73,6 @@ log_info "Compiling gsettings schemas..."
 
 schemas=(
     "tactile@lundal.io/schemas/org.gnome.shell.extensions.tactile.gschema.xml"
-    "just-perfection-desktop@just-perfection/schemas/org.gnome.shell.extensions.just-perfection.gschema.xml"
     "blur-my-shell@aunetx/schemas/org.gnome.shell.extensions.blur-my-shell.gschema.xml"
 )
 
@@ -109,10 +106,10 @@ gsettings set org.gnome.shell.extensions.blur-my-shell.appfolder blur false
 gsettings set org.gnome.shell.extensions.blur-my-shell.lockscreen blur false
 gsettings set org.gnome.shell.extensions.blur-my-shell.screenshot blur false
 gsettings set org.gnome.shell.extensions.blur-my-shell.window-list blur false
-gsettings set org.gnome.shell.extensions.blur-my-shell.panel blur false
+gsettings set org.gnome.shell.extensions.blur-my-shell.panel blur true
 gsettings set org.gnome.shell.extensions.blur-my-shell.overview blur true
 gsettings set org.gnome.shell.extensions.blur-my-shell.overview pipeline 'pipeline_default'
-gsettings set org.gnome.shell.extensions.blur-my-shell.dash-to-dock blur true
+gsettings set org.gnome.shell.extensions.blur-my-shell.dash-to-dock blur false
 gsettings set org.gnome.shell.extensions.blur-my-shell.dash-to-dock brightness 0.6
 gsettings set org.gnome.shell.extensions.blur-my-shell.dash-to-dock sigma 30
 gsettings set org.gnome.shell.extensions.blur-my-shell.dash-to-dock static-blur true

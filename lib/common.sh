@@ -54,6 +54,15 @@ pkg_install() {
     esac
 }
 
+# Same as pkg_install but for scripts running as the regular user
+sudo_pkg_install() {
+    case "$DISTRO" in
+        ubuntu|pop|linuxmint) sudo apt install -y "$@" ;;
+        fedora)               sudo dnf install -y --skip-unavailable "$@" ;;
+        *) log_error "Unsupported distro: $DISTRO"; exit 1 ;;
+    esac
+}
+
 pkg_update() {
     case "$DISTRO" in
         ubuntu|pop|linuxmint) apt update && apt upgrade -y ;;

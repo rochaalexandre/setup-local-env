@@ -1,135 +1,115 @@
 # Setup Local Environment
 
-A comprehensive Linux development environment setup script that automates the installation and configuration of various tools, applications, and utilities commonly needed for development work.
+Scripts to provision a fresh Linux development machine: system packages, dev
+tools, applications, terminal/shell, and optional GNOME desktop tweaks.
 
-## Overview
+## Supported distros
 
-This repository provides a streamlined way to set up a complete development environment on a fresh Linux installation. It installs essential development tools, modern terminal configurations, popular applications, and productivity utilities in a single automated process.
+- Fedora
+- Ubuntu (and derivatives: Pop!_OS, Linux Mint)
 
-## Features
-
-- **Automated Installation**: One-command setup for entire development environment
-- **Comprehensive Tool Selection**: Includes development tools, IDEs, browsers, and productivity apps
-- **Modern Terminal Setup**: Zsh shell with Starship prompt and Zap plugin manager
-- **Version Management**: Mise for managing multiple language versions
-- **Container Support**: Docker installation included
-- **Desktop Integration**: Creates desktop applications for web services
+Distro is detected from `/etc/os-release`. Package names and repo setup are
+mapped per distro in `lib/packages.sh` / `lib/common.sh`.
 
 ## Prerequisites
 
-- Linux system (Ubuntu/Debian-based recommended)
 - Root/sudo access
 - Internet connection
-
-## Installation
-
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd setup-local-env
-   ```
-
-2. Make the installation script executable:
-   ```bash
-   chmod +x install.sh
-   ```
-
-3. Run the installation script as root:
-   ```bash
-   sudo ./install.sh
-   ```
-
-## What Gets Installed
-
-The script installs the following components in order:
-
-### System & Core Tools
-- **System Updates** - Updates package lists and upgrades system packages
-- **Essential Packages** - Core development tools, libraries, databases, and utilities
-- **Fonts** - Additional fonts for better display
-
-### Applications
-- **Tilix** - Advanced terminal emulator
-- **Google Chrome** - Web browser
-- **1Password** - Password manager
-- **Spotify** - Music streaming service
-- **IntelliJ IDEA** - Integrated Development Environment
-
-### Development Tools
-- **Docker** - Containerization platform
-- **Zed** - Modern code editor
-- **Mise** - Universal version manager for multiple languages/tools
-
-### Terminal & Shell
-- **Zsh** - Advanced shell with autojump (set as default)
-- **Starship** - Cross-shell prompt
-- **Zap** - Plugin manager for Zsh
-
-### System Integration
-- **Flatpak** - Application packaging system
-- **Desktop Applications** - Creates desktop entries for web services
-
-## Directory Structure
-
-```
-setup-local-env/
-├── install.sh              # Main installation script
-├── scripts/                # Individual installation scripts
-│   ├── 01-update-system.sh
-│   ├── 02-install-essential.sh
-│   ├── 03-install-fonts.sh
-│   ├── 04-install-tilix.sh
-│   ├── 05-install-chrome.sh
-│   ├── 06-install-1password.sh
-│   ├── 07-install-docker.sh
-│   ├── 08-install-zsh.sh
-│   ├── 09-install-mise.sh
-│   ├── 10-install-starship.sh
-│   ├── 11-install-zap.sh
-│   ├── 12-install-zed.sh
-│   ├── 13-install-spotify.sh
-│   ├── 14-install-flatpak.sh
-│   ├── 15-install-intellij.sh
-│   └── 99-finalize.sh
-└── apps/                   # Desktop application scripts
-    ├── WhatsApp.sh         # WhatsApp web app desktop entry
-    └── icons/              # Application icons directory
-```
+- Being logged into a desktop session (for the rootless Docker and optional
+  GNOME steps)
 
 ## Usage
 
-After installation, you'll have:
-- A modern terminal setup with Zsh and Starship prompt
-- Essential development tools and languages managed by Mise
-- Popular applications ready to use
-- Desktop integration for web services
+```bash
+git clone <repository-url>
+cd setup-local-env
 
-## Customization
+# 1. Core install — run as root
+sudo ./install.sh
 
-You can modify individual scripts in the `scripts/` directory to:
-- Add or remove packages
-- Change installation parameters
-- Modify configuration settings
+# 2. Optional GNOME tweaks — run as your regular user, NOT sudo
+./optional/install.sh
+```
 
-## Post-Installation
+`install.sh` runs each script in `scripts/` in the order listed in its
+`SCRIPTS=()` array. A failing script is logged and the run continues; a summary
+is printed at the end.
 
-The script automatically:
-- Sets Zsh as the default shell
-- Configures the terminal environment
-- Creates desktop applications
-- Performs system cleanup
+## What gets installed
 
-## Troubleshooting
+### System
 
-- Ensure you have root/sudo privileges
-- Check internet connectivity for package downloads
-- Review individual script logs if installation fails
-- Some applications may require manual configuration after installation
+| Script | Purpose |
+| --- | --- |
+| `update-system` | Update + upgrade all system packages |
+| `install-essential` | Build toolchain, dev libraries (openssl, readline, sqlite, pg, mysql, ...), CLI utils (curl, wget, unzip, gpg, neofetch/fastfetch, flameshot, autojump, redis-cli, mupdf) |
+| `install-fonts` | Nerd Fonts: FiraCode, Meslo, JetBrainsMono → `~/.fonts` |
 
-## Contributing
+### Applications
 
-Feel free to submit issues and enhancement requests. When adding new tools or applications, follow the existing script naming convention (XX-description.sh) and maintain the installation order.
+| Script | Purpose |
+| --- | --- |
+| `install-ghostty` | Ghostty terminal (PPA on Ubuntu, RPM repo on Fedora); set as `x-terminal-emulator` |
+| `install-chrome` | Google Chrome (official Google repo) |
+| `install-1password` | 1Password (official 1Password repo) |
+| `install-flatpak` | Flatpak + Flathub remote |
+| `install-spotify` | Spotify via Flathub (`com.spotify.Client`) |
+| `install-jetbrains-toolbox` | JetBrains Toolbox App (JetBrains IDEs don't self-update on Linux); launch it and sign in to install IntelliJ |
 
-## License
+### Development tools
 
-This project is open source. Please check the license file for details.
+| Script | Purpose |
+| --- | --- |
+| `install-docker` | Docker via `get.docker.com`, then rootless mode for the user; selects the `rootless` docker context (no shell env changes) |
+| `install-zed` | Zed editor (per-user install via `zed.dev/install.sh`) |
+| `install-mise` | Mise version manager (per-user install via `mise.run`) |
+
+### Terminal & shell
+
+| Script | Purpose |
+| --- | --- |
+| `install-zsh` | Install Zsh, set as the user's default shell |
+| `install-starship` | Starship prompt → `/usr/local/bin` |
+
+> Shell configuration (`.zshrc` etc.) is **not** managed here — it lives in a
+> separate dotfiles repo.
+
+### Desktop
+
+| Script | Purpose |
+| --- | --- |
+| `configure-nvidia-wayland` | If an Nvidia GPU is present: prompt, install drivers, write Wayland env vars to `~/.config/environment.d/nvidia.conf` |
+| `finalize` | Package cache cleanup / autoremove |
+
+### Optional (`optional/install.sh`, run as user)
+
+| Script | Purpose |
+| --- | --- |
+| `set-gnome-extensions` | Extension manager, `gnome-extensions-cli`, install + configure dash-to-dock, blur-my-shell, tactile, resource monitor, etc. |
+| `set-gnome-settings` | GNOME keybindings and desktop settings (workspaces, window management, custom shortcuts) |
+
+`set-gnome-extensions` must run before `set-gnome-settings` (the latter
+configures extensions the former installs). Both are skipped on non-GNOME
+sessions.
+
+## Layout
+
+```
+install.sh              # core installer (root) — SCRIPTS=() array defines order
+lib/
+  common.sh             # distro detection, pkg_* helpers, logging, user resolution
+  packages.sh           # per-distro package name map
+scripts/                # individual install steps (unnumbered; order lives in install.sh)
+optional/
+  install.sh            # optional installer (regular user)
+  set-gnome-extensions.sh
+  set-gnome-settings.sh
+```
+
+## Adding a step
+
+1. Add `scripts/<name>.sh` (source `lib/common.sh`, call `require_root`).
+2. Add `<name>` to the `SCRIPTS=()` array in `install.sh` at the right position.
+
+Use the `pkg_install` / `pkg_update` / `pkg_add_repo` helpers and the `PKG_*`
+variables so both distros stay supported.

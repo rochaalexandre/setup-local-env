@@ -7,7 +7,7 @@ log_info "Installing Spotify via Flatpak..."
 
 # Ensure flatpak is available
 if ! command -v flatpak &>/dev/null; then
-    log_error "Flatpak not found. Run 14-install-flatpak.sh first."
+    log_error "Flatpak not found. Run install-flatpak.sh first."
     exit 1
 fi
 
