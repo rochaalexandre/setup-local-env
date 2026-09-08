@@ -11,14 +11,11 @@ case "$DISTRO" in
         pkg_install ghostty
         ;;
     fedora)
-        cat > /etc/yum.repos.d/ghostty.repo << 'REPO'
-[ghostty]
-name=Ghostty
-baseurl=https://packages.ghostty.org/rpm/fedora/$releasever/$basearch
-enabled=1
-gpgcheck=0
-REPO
-        dnf install -y --skip-unavailable ghostty
+        # No official Ghostty RPM repo exists; scottames/ghostty COPR is the
+        # community-maintained package (COPR handles its own GPG signing).
+        rm -f /etc/yum.repos.d/ghostty.repo   # drop stale repo from older versions
+        dnf copr enable -y scottames/ghostty
+        dnf install -y ghostty
         ;;
 esac || { log_error "Ghostty installation failed!"; exit 1; }
 
