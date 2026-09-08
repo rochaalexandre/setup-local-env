@@ -31,20 +31,17 @@ esac
 
 log_info "Configuring Wayland environment for $USERNAME..."
 
-ZSHENV="$USER_HOME/.zshenv"
+# systemd user environment — picked up by the Wayland session at login,
+# not just by shells (which is why .zshenv would not work here).
+ENV_DIR="$USER_HOME/.config/environment.d"
+ENV_FILE="$ENV_DIR/nvidia.conf"
 
-vars=(
-    "export LIBVA_DRIVER_NAME=nvidia"
-    "export XDG_SESSION_TYPE=wayland"
-    "export GBM_BACKEND=nvidia-drm"
-    "export __GLX_VENDOR_LIBRARY_NAME=nvidia"
-    "export WLR_NO_HARDWARE_CURSORS=1"
-)
+run_as_user mkdir -p "$ENV_DIR"
+run_as_user tee "$ENV_FILE" > /dev/null << 'EOF'
+LIBVA_DRIVER_NAME=nvidia
+GBM_BACKEND=nvidia-drm
+__GLX_VENDOR_LIBRARY_NAME=nvidia
+WLR_NO_HARDWARE_CURSORS=1
+EOF
 
-for var in "${vars[@]}"; do
-    key=$(echo "$var" | cut -d= -f1 | sed 's/export //')
-    grep -qF "$key" "$ZSHENV" 2>/dev/null || echo "$var" >> "$ZSHENV"
-done
-
-chown "$USERNAME:$USERNAME" "$ZSHENV"
-log_success "Nvidia Wayland configuration applied"
+log_success "Nvidia Wayland configuration applied (relog to take effect)"

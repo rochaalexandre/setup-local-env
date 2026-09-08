@@ -4,7 +4,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 # This script must run as the real user, not root
 if [ "$(id -u)" -eq 0 ]; then
-    log_error "This script must run as the regular user, not root. Run: ./18-set-gnome-settings.sh"
+    log_error "This script must run as the regular user, not root. Run: ./optional/set-gnome-settings.sh"
     exit 1
 fi
 
@@ -16,9 +16,7 @@ fi
 
 log_info "Configuring GNOME settings and keybindings..."
 
-# ---------------------------------------------------------------------------
 # General settings
-# ---------------------------------------------------------------------------
 gsettings set org.gnome.mutter center-new-windows true
 gsettings set org.gnome.desktop.calendar show-weekdate true
 gsettings set org.gnome.settings-daemon.plugins.power ambient-enabled false
@@ -31,42 +29,29 @@ gsettings set org.gnome.mutter overlay-key "['<Super>W']"
 
 # ---------------------------------------------------------------------------
 # Window management
-# ---------------------------------------------------------------------------
 gsettings set org.gnome.desktop.wm.keybindings close "['<Super>q', '<Alt>F4']"
 gsettings set org.gnome.desktop.wm.keybindings maximize "['<Super>Up']"
 gsettings set org.gnome.desktop.wm.keybindings toggle-fullscreen "['<Shift>F11']"
 gsettings set org.gnome.desktop.wm.keybindings begin-resize "['<Super>BackSpace']"
 gsettings set org.gnome.desktop.wm.keybindings show-desktop "['<Super>d']"
 
-# Tiling left/right
-gsettings set org.gnome.desktop.wm.keybindings tile-left "['<Super>Left']"
-gsettings set org.gnome.desktop.wm.keybindings tile-right "['<Super>Right']"
-
-# ---------------------------------------------------------------------------
 # Workspace navigation
-# ---------------------------------------------------------------------------
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-left "['<Ctrl><Super>Left']"
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-right "['<Ctrl><Super>Right']"
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-1 "['<Super>1']"
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-2 "['<Super>2']"
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-3 "['<Super>3']"
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-4 "['<Super>4']"
-
-# Move app to workspace
 gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-1 "['<Shift><Super>1']"
 gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-2 "['<Shift><Super>2']"
 gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-3 "['<Shift><Super>3']"
 gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-4 "['<Shift><Super>4']"
 
-# ---------------------------------------------------------------------------
 # Input source
-# ---------------------------------------------------------------------------
 gsettings set org.gnome.desktop.wm.keybindings switch-input-source "['<Super>i']"
 gsettings set org.gnome.desktop.wm.keybindings switch-input-source-backward "@as []"
 
-# ---------------------------------------------------------------------------
 # Dock app shortcuts
-# ---------------------------------------------------------------------------
 gsettings set org.gnome.shell.extensions.dash-to-dock hot-keys false
 gsettings set org.gnome.shell.keybindings switch-to-application-1 "['<Super><Alt>1']"
 gsettings set org.gnome.shell.keybindings switch-to-application-2 "['<Super><Alt>2']"
@@ -78,19 +63,18 @@ gsettings set org.gnome.shell.keybindings switch-to-application-7 "['<Super><Alt
 gsettings set org.gnome.shell.keybindings switch-to-application-8 "['<Super><Alt>8']"
 gsettings set org.gnome.shell.keybindings switch-to-application-9 "['<Super><Alt>9']"
 
-# ---------------------------------------------------------------------------
 # Custom keybindings
-# ---------------------------------------------------------------------------
 gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "[
   '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/',
   '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/',
   '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/',
-  '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/'
+  '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/',
+  '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/'
 ]"
 
-# Super+Space — Vicinae
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name 'Vicinae'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command 'vicinae toggle'
+# Super+Space — Albert
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name 'Albert'
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command 'albert toggle'
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding '<Super>space'
 
 # Ctrl+Print — Flameshot
@@ -107,12 +91,6 @@ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/or
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/ name 'New Chrome Window'
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/ command 'google-chrome --new-window'
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/ binding '<Shift><Alt>1'
-
-# Super+Shift+A — Audio Devices Hider
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/ name 'Audio Devices Hider'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/ command 'gnome-extensions prefs quicksettings-audio-devices-hider@marcinjahn.com'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/ binding '<Super><Shift>a'
-
 
 # Lock screen — Ctrl+Super+Q
 gsettings set org.gnome.settings-daemon.plugins.media-keys screensaver "['<Ctrl><Super>q']"
