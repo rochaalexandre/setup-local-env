@@ -13,6 +13,10 @@ rm /tmp/install-docker.sh
 log_info "Configuring Docker rootless mode for $USERNAME..."
 pkg_install $PKG_UIDMAP $PKG_DBUS_USER
 
+# get.docker.com enables the rootful system daemon. We only want rootless —
+# stop and disable it so there's a single daemon / socket.
+systemctl disable --now docker.service docker.socket 2>/dev/null || true
+
 loginctl enable-linger "$USERNAME"
 
 USER_UID=$(id -u "$USERNAME")
