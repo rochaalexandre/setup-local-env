@@ -3,7 +3,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 . "$SCRIPT_DIR/lib/common.sh"
 
 if [ "$(id -u)" -eq 0 ]; then
-    log_error "This script must run as the regular user, not root. Run: ./17-set-gnome-extensions.sh"
+    log_error "This script must run as the regular user, not root. Run: ./optional/set-gnome-extensions.sh"
     exit 1
 fi
 

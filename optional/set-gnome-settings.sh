@@ -4,7 +4,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 # This script must run as the real user, not root
 if [ "$(id -u)" -eq 0 ]; then
-    log_error "This script must run as the regular user, not root. Run: ./18-set-gnome-settings.sh"
+    log_error "This script must run as the regular user, not root. Run: ./optional/set-gnome-settings.sh"
     exit 1
 fi
 

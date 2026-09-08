@@ -24,7 +24,6 @@ SCRIPTS=(
     install-flatpak
     install-spotify
     install-jetbrains-toolbox
-    configure-nvidia-wayland
     finalize
 )
 

@@ -27,13 +27,16 @@ cd setup-local-env
 # 1. Core install — run as root
 sudo ./install.sh
 
-# 2. Optional GNOME tweaks — run as your regular user, NOT sudo
-./optional/install.sh
+# 2. Optional tweaks — run individually, only the ones you want
+./optional/set-gnome-extensions.sh          # as your regular user, NOT sudo
+./optional/set-gnome-settings.sh            # as your regular user, NOT sudo
+sudo ./optional/configure-nvidia-wayland.sh # needs root; only if on Nvidia
 ```
 
 `install.sh` runs each script in `scripts/` in the order listed in its
 `SCRIPTS=()` array. A failing script is logged and the run continues; a summary
-is printed at the end.
+is printed at the end. Scripts in `optional/` are standalone — run whichever
+you want, in any order (except `set-gnome-extensions` before `set-gnome-settings`).
 
 ## What gets installed
 
@@ -74,23 +77,23 @@ is printed at the end.
 > Shell configuration (`.zshrc` etc.) is **not** managed here — it lives in a
 > separate dotfiles repo.
 
-### Desktop
+### Cleanup
 
 | Script | Purpose |
 | --- | --- |
-| `configure-nvidia-wayland` | If an Nvidia GPU is present: prompt, install drivers, write Wayland env vars to `~/.config/environment.d/nvidia.conf` |
 | `finalize` | Package cache cleanup / autoremove |
 
-### Optional (`optional/install.sh`, run as user)
+### `optional/` — run individually, not part of `install.sh`
 
-| Script | Purpose |
-| --- | --- |
-| `set-gnome-extensions` | Extension manager, `gnome-extensions-cli`, install + configure dash-to-dock, blur-my-shell, tactile, resource monitor, etc. |
-| `set-gnome-settings` | GNOME keybindings and desktop settings (workspaces, window management, custom shortcuts) |
+| Script | Run as | Purpose |
+| --- | --- | --- |
+| `set-gnome-extensions` | user | Extension manager, `gnome-extensions-cli`, install + configure dash-to-dock, blur-my-shell, tactile, resource monitor, etc. |
+| `set-gnome-settings` | user | GNOME keybindings and desktop settings (workspaces, window management, custom shortcuts) |
+| `configure-nvidia-wayland` | root | Nvidia only: prompt, install drivers, write Wayland env vars to `~/.config/environment.d/nvidia.conf`. Skip if Nouveau works for you. |
 
 `set-gnome-extensions` must run before `set-gnome-settings` (the latter
-configures extensions the former installs). Both are skipped on non-GNOME
-sessions.
+configures extensions the former installs). GNOME scripts skip on non-GNOME
+sessions; the Nvidia script skips if no Nvidia GPU is detected.
 
 ## Layout
 
@@ -99,11 +102,11 @@ install.sh              # core installer (root) — SCRIPTS=() array defines ord
 lib/
   common.sh             # distro detection, pkg_* helpers, logging, user resolution
   packages.sh           # per-distro package name map
-scripts/                # individual install steps (unnumbered; order lives in install.sh)
-optional/
-  install.sh            # optional installer (regular user)
+scripts/                # steps run by install.sh (unnumbered; order lives in install.sh)
+optional/               # standalone extras — run individually, pick what you want
   set-gnome-extensions.sh
   set-gnome-settings.sh
+  configure-nvidia-wayland.sh
 ```
 
 ## Adding a step
