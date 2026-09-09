@@ -34,6 +34,8 @@ gsettings set org.gnome.desktop.wm.keybindings maximize "['<Super>Up']"
 gsettings set org.gnome.desktop.wm.keybindings toggle-fullscreen "['<Shift>F11']"
 gsettings set org.gnome.desktop.wm.keybindings begin-resize "['<Super>BackSpace']"
 gsettings set org.gnome.desktop.wm.keybindings show-desktop "['<Super>d']"
+gsettings get org.gnome.desktop.wm.keybindings move-to-workspace-left "['<Shift><Super>Left']"
+gsettings get org.gnome.desktop.wm.keybindings move-to-workspace-right "['<Shift><Super>Right']"
 
 # Workspace navigation
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-left "['<Ctrl><Super>Left']"
@@ -46,6 +48,13 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-1 "['<Shift><Su
 gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-2 "['<Shift><Super>2']"
 gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-3 "['<Shift><Super>3']"
 gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-4 "['<Shift><Super>4']"
+
+# App switcher — Alt+Tab
+gsettings set org.gnome.desktop.wm.keybindings switch-windows "['<Alt>Tab']"
+gsettings set org.gnome.desktop.wm.keybindings switch-windows-backward "['<Shift><Alt>Tab']"
+gsettings set org.gnome.desktop.wm.keybindings switch-applications "['<Super>Tab']"
+gsettings set org.gnome.desktop.wm.keybindings switch-applications-backward "['<Super><Alt>Tab']"
+
 
 # Input source
 gsettings set org.gnome.desktop.wm.keybindings switch-input-source "['<Super>i']"
