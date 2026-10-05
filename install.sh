@@ -21,6 +21,8 @@ SCRIPTS=(
     install-mise
     install-starship
     install-zed
+    install-claude-code
+    install-codex
     install-flatpak
     install-spotify
     install-jetbrains-toolbox

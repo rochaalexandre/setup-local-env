@@ -28,7 +28,6 @@ cd setup-local-env
 sudo ./install.sh
 
 # 2. Optional tweaks — run individually, only the ones you want
-./optional/set-gnome-extensions.sh          # as your regular user, NOT sudo
 ./optional/set-gnome-settings.sh            # as your regular user, NOT sudo
 sudo ./optional/configure-nvidia-wayland.sh # needs root; only if on Nvidia
 ```
@@ -36,7 +35,7 @@ sudo ./optional/configure-nvidia-wayland.sh # needs root; only if on Nvidia
 `install.sh` runs each script in `scripts/` in the order listed in its
 `SCRIPTS=()` array. A failing script is logged and the run continues; a summary
 is printed at the end. Scripts in `optional/` are standalone — run whichever
-you want, in any order (except `set-gnome-extensions` before `set-gnome-settings`).
+you want. The GNOME script installs extensions before applying their configuration.
 
 ## What gets installed
 
@@ -66,6 +65,12 @@ you want, in any order (except `set-gnome-extensions` before `set-gnome-settings
 | `install-docker` | Docker via `get.docker.com`, then rootless mode for the user; selects the `rootless` docker context (no shell env changes) |
 | `install-zed` | Zed editor (per-user install via `zed.dev/install.sh`) |
 | `install-mise` | Mise version manager (per-user install via `mise.run`) |
+| `install-claude-code` | Claude Code CLI (per-user native install via `claude.ai/install.sh`) |
+| `install-codex` | Codex CLI (per-user standalone install via `chatgpt.com/codex/install.sh`) |
+
+The AI CLIs use standalone installers and do not require Node.js. After setup,
+run `claude` and `codex` as your regular user to sign in. Ensure `~/.local/bin`
+is on your PATH in your dotfiles.
 
 ### Terminal & shell
 
@@ -87,13 +92,21 @@ you want, in any order (except `set-gnome-extensions` before `set-gnome-settings
 
 | Script | Run as | Purpose |
 | --- | --- | --- |
-| `set-gnome-extensions` | user | Extension manager, `gnome-extensions-cli`, install + configure dash-to-dock, blur-my-shell, tactile, resource monitor, etc. |
-| `set-gnome-settings` | user | GNOME keybindings and desktop settings (workspaces, window management, custom shortcuts) |
+| `set-gnome-settings` | user | Install GNOME extensions and configure desktop settings, shortcuts, and Shatter Shell as the default tiling setup |
 | `configure-nvidia-wayland` | root | Nvidia only: prompt, install drivers, write Wayland env vars to `~/.config/environment.d/nvidia.conf`. Skip if Nouveau works for you. |
 
-`set-gnome-extensions` must run before `set-gnome-settings` (the latter
-configures extensions the former installs). GNOME scripts skip on non-GNOME
-sessions; the Nvidia script skips if no Nvidia GPU is detected.
+`set-gnome-settings` installs extensions, prepares their schemas, and applies
+settings in one run. Existing extensions are reused. Shatter Shell handles tiling
+and Super+Arrow focus; Ctrl+Alt shortcuts handle snapping and maximizing.
+Shatter Shell requires GNOME 48–51. On Fedora, the script adds the Terra community
+repository, removes the Pop Shell package, and installs Shatter Shell. On Ubuntu
+and derivatives with a compatible GNOME version, it builds release 2.3.1 from
+source using git, make, and npm. Older GNOME versions are rejected before changes.
+See the [upstream installation instructions](https://github.com/adil192/shatter-shell#installation).
+Log out and back in after installing; enable Shatter Shell in Extension Manager
+if it could not be enabled during the run.
+The GNOME script skips on non-GNOME sessions; the Nvidia script skips if no
+Nvidia GPU is detected.
 
 ## Layout
 
@@ -104,7 +117,6 @@ lib/
   packages.sh           # per-distro package name map
 scripts/                # steps run by install.sh (unnumbered; order lives in install.sh)
 optional/               # standalone extras — run individually, pick what you want
-  set-gnome-extensions.sh
   set-gnome-settings.sh
   configure-nvidia-wayland.sh
 ```
