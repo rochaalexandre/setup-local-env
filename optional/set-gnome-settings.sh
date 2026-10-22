@@ -54,6 +54,23 @@ else
     esac
 fi
 
+# GNOME loads the extension-local compiled schema even when a global schema exists.
+SHATTER_EXTENSION_DIR="$USER_DATA_DIR/gnome-shell/extensions/$SHATTER_UUID"
+if [ ! -d "$SHATTER_EXTENSION_DIR" ]; then
+    SHATTER_EXTENSION_DIR="/usr/share/gnome-shell/extensions/$SHATTER_UUID"
+fi
+SHATTER_SCHEMA_DIR="$SHATTER_EXTENSION_DIR/schemas"
+if [ ! -f "$SHATTER_SCHEMA_DIR/org.gnome.shell.extensions.shatter-shell.gschema.xml" ]; then
+    log_error "Shatter Shell schema XML missing: $SHATTER_SCHEMA_DIR"
+    exit 1
+fi
+log_info "Compiling Shatter Shell extension schema..."
+if [ "$SHATTER_EXTENSION_DIR" = "/usr/share/gnome-shell/extensions/$SHATTER_UUID" ]; then
+    sudo glib-compile-schemas --strict "$SHATTER_SCHEMA_DIR"
+else
+    glib-compile-schemas --strict "$SHATTER_SCHEMA_DIR"
+fi
+
 # Source installs put the schema in the user's data directory.
 if [ -f "$USER_DATA_DIR/glib-2.0/schemas/org.gnome.shell.extensions.shatter-shell.gschema.xml" ]; then
     export GSETTINGS_SCHEMA_DIR="$USER_DATA_DIR/glib-2.0/schemas"
