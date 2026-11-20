@@ -29,6 +29,7 @@ sudo ./install.sh
 
 # 2. Optional tweaks — run individually, only the ones you want
 ./optional/set-gnome-settings.sh            # as your regular user, NOT sudo
+./optional/install-shatter-shell.sh         # optional Fedora tiling extension
 sudo ./optional/configure-nvidia-wayland.sh # needs root; only if on Nvidia
 ```
 
@@ -92,19 +93,18 @@ is on your PATH in your dotfiles.
 
 | Script | Run as | Purpose |
 | --- | --- | --- |
-| `set-gnome-settings` | user | Install GNOME extensions and configure desktop settings, shortcuts, and Shatter Shell as the default tiling setup |
+| `set-gnome-settings` | user | Install GNOME extensions and configure desktop settings and shortcuts |
+| `install-shatter-shell` | user | Fedora only: install Shatter Shell from Terra, configure tiling shortcuts, and remove existing Pop Shell installations |
 | `configure-nvidia-wayland` | root | Nvidia only: prompt, install drivers, write Wayland env vars to `~/.config/environment.d/nvidia.conf`. Skip if Nouveau works for you. |
 
 `set-gnome-settings` installs extensions, prepares their schemas, and applies
-settings in one run. Existing extensions are reused. Shatter Shell handles tiling
-and Super+Arrow focus; Ctrl+Alt shortcuts handle snapping and maximizing.
-Shatter Shell requires GNOME 48–51. On Fedora, the script adds the Terra community
-repository, removes the Pop Shell package, and installs Shatter Shell. On Ubuntu
-and derivatives with a compatible GNOME version, it builds release 2.3.1 from
-source using git, make, and npm. Older GNOME versions are rejected before changes.
-See the [upstream installation instructions](https://github.com/adil192/shatter-shell#installation).
-Log out and back in after installing; enable Shatter Shell in Extension Manager
-if it could not be enabled during the run.
+settings in one run. Existing extensions are reused.
+
+On Fedora with GNOME 48–51, run `install-shatter-shell` for optional tiling.
+Run it after `set-gnome-settings` if using both, then reboot. For a fresh install,
+enable Shatter Shell in Extension Manager after reboot.
+See the [upstream installation instructions](https://github.com/adil192/shatter-shell#install).
+
 The GNOME script skips on non-GNOME sessions; the Nvidia script skips if no
 Nvidia GPU is detected.
 
@@ -114,10 +114,12 @@ Nvidia GPU is detected.
 install.sh              # core installer (root) — SCRIPTS=() array defines order
 lib/
   common.sh             # distro detection, pkg_* helpers, logging, user resolution
+  gnome.sh              # GNOME extension, schema, and shortcut helpers
   packages.sh           # per-distro package name map
 scripts/                # steps run by install.sh (unnumbered; order lives in install.sh)
 optional/               # standalone extras — run individually, pick what you want
   set-gnome-settings.sh
+  install-shatter-shell.sh
   configure-nvidia-wayland.sh
 ```
 
