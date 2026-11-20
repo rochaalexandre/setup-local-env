@@ -206,6 +206,10 @@ gsettings set org.gnome.desktop.wm.keybindings show-desktop "['<Super>d']"
 gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-left "['<Shift><Super>Left']"
 gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-right "['<Shift><Super>Right']"
 
+# Free IntelliJ change navigation; windows move between workspaces horizontally.
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-up "@as []"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-down "@as []"
+
 # Workspace navigation
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-left "['<Ctrl><Super>Left']"
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-right "['<Ctrl><Super>Right']"
@@ -288,11 +292,15 @@ gnome-extensions enable "$SHATTER_UUID" \
 
 # ---------------------------------------------------------------------------
 # Rectangle layer (Ctrl+Opt on macOS = Ctrl+Alt here)
-# Super+Arrows are handed over to Shatter focus, so snap/maximize live here only.
+# Super+Arrows are handed over to Shatter focus; Ctrl+Alt+Left/Right tile.
+# Maximize and move use Super to preserve IntelliJ Ctrl+Alt+Enter and Alt+F7.
 gsettings set org.gnome.mutter.keybindings toggle-tiled-left "['<Control><Alt>Left']"
 gsettings set org.gnome.mutter.keybindings toggle-tiled-right "['<Control><Alt>Right']"
 gsettings set org.gnome.desktop.wm.keybindings maximize "@as []"
-gsettings set org.gnome.desktop.wm.keybindings toggle-maximized "['<Control><Alt>Return', '<Alt>F10']"
+gsettings set org.gnome.desktop.wm.keybindings toggle-maximized "['<Super>m']"
+gsettings set org.gnome.desktop.wm.keybindings begin-move "['<Super><Alt>F7']"
+# Keep notifications on Super+V, freeing Super+M for maximize.
+gsettings set org.gnome.shell.keybindings toggle-message-tray "['<Super>v']"
 gsettings set org.gnome.desktop.wm.keybindings unmaximize "['<Control><Alt>BackSpace', '<Alt>F5']"
 gsettings set org.gnome.desktop.wm.keybindings move-to-monitor-left "['<Control><Alt><Super>Left']"
 gsettings set org.gnome.desktop.wm.keybindings move-to-monitor-right "['<Control><Alt><Super>Right']"
